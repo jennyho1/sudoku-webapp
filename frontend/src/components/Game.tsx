@@ -9,6 +9,12 @@ export type CellData = {
   fixed: boolean;
 };
 
+type CellState = {
+  row: number;
+  col: number;
+  state: CellData;
+};
+
 // 9x9 array with initial values (0 represents empty cells)
 const initialBoard = [
   [1, 3, 0, 0, 0, 4, 0, 0, 0],
@@ -39,9 +45,11 @@ function Game() {
     col: number;
     box: number;
   }>({ row: -1, col: -1, box: -1 });
-  const [isNotesToggled, setNotesToggle] = useState<boolean>(false);
+  const [notesToggled, setNotesToggle] = useState<boolean>(false);
+  const [undoStack, setUndoStack] = useState<CellState[]>([]);
+  const [redoStack, setRedoStack] = useState<CellState[]>([]);
 
-  const handleToggle = () => setNotesToggle(!isNotesToggled);
+  const handleToggle = () => setNotesToggle(!notesToggled);
 
   const handleCellClick = (row: number, col: number, box: number) => {
     setSelectedCell((prev) =>
@@ -53,32 +61,105 @@ function Game() {
 
   const handleErase = () => {
     if (selectedCell.row !== -1 && selectedCell.col !== -1) {
-      const updatedBoard = [...board];
-      updatedBoard[selectedCell.row][selectedCell.col].value = null;
-      updatedBoard[selectedCell.row][selectedCell.col].notes = [];
-      setBoard(updatedBoard);
+      setBoard(
+        board.map((row, rowIndex) =>
+          row.map((cellData, colIndex) => {
+            if (
+              rowIndex === selectedCell.row &&
+              colIndex === selectedCell.col
+            ) {
+              return { ...cellData, value: null, notes: [] };
+            }
+            return cellData;
+          })
+        )
+      );
     }
   };
 
   const handleNumberClick = (number: number) => {
-    const { row, col } = selectedCell;
-    if (row === -1 || col === -1 || board[row][col].fixed) return;
+    if (selectedCell.row === -1 && selectedCell.col === -1) return;
 
-    const updatedBoard = [...board];
-    const cell = updatedBoard[row][col];
-    if (isNotesToggled) {
-      cell.value = null;
-      if (cell.notes.includes(number)) {
-        cell.notes = cell.notes.filter((num) => num !== number);
-      } else {
-        cell.notes.push(number);
-      }
-    } else {
-      cell.value = number;
-      cell.notes = [];
-    }
+    setBoard(
+      board.map((row, rowIndex) =>
+        row.map((cellData, colIndex) => {
+          if (rowIndex === selectedCell.row && colIndex === selectedCell.col) {
+            if (notesToggled || number !== cellData.value)
+              savePreviousState(rowIndex, colIndex, cellData);
+            if (notesToggled) {
+              return {
+                ...cellData,
+                value: null,
+                notes: cellData.notes.includes(number)
+                  ? cellData.notes.filter((num) => num !== number)
+                  : [...cellData.notes, number],
+              };
+            } else if (cellData.value !== number) {
+              return {
+                ...cellData,
+                value: number,
+                notes: [],
+              };
+            }
+          }
+          return cellData;
+        })
+      )
+    );
+  };
 
-    setBoard(updatedBoard);
+  const savePreviousState = (
+    row: number,
+    col: number,
+    previousState: CellData
+  ) => {
+    setUndoStack((prev) => [...prev, { row, col, state: previousState }]);
+    setRedoStack([]); // Clear redo stack after a new move
+  };
+
+  const handleUndo = () => {
+    if (undoStack.length === 0) return;
+
+    const lastState = undoStack[undoStack.length - 1];
+    setUndoStack((prev) => prev.slice(0, -1));
+    setRedoStack((prev) => [
+      ...prev,
+      { ...lastState, state: board[lastState.row][lastState.col] },
+    ]);
+
+    setBoard(
+      board.map((row, rowIndex) =>
+        row.map((cellData, colIndex) =>
+          rowIndex === lastState.row && colIndex === lastState.col
+            ? lastState.state
+            : cellData
+        )
+      )
+    );
+  };
+
+  const handleRedo = () => {
+    if (redoStack.length === 0) return;
+
+    const lastUndoneState = redoStack[redoStack.length - 1];
+    setRedoStack((prev) => prev.slice(0, -1));
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        ...lastUndoneState,
+        state: board[lastUndoneState.row][lastUndoneState.col],
+      },
+    ]);
+
+    setBoard(
+      board.map((row, rowIndex) =>
+        row.map((cellData, colIndex) =>
+          rowIndex === lastUndoneState.row && colIndex === lastUndoneState.col
+            ? lastUndoneState.state
+            : cellData
+        )
+      )
+    );
   };
 
   return (
@@ -91,9 +172,11 @@ function Game() {
 
       <div className="sidebar">
         <Controls
-          isNotesToggled={isNotesToggled}
+          notesToggled={notesToggled}
           onErase={handleErase}
           onToggle={handleToggle}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
         />
         <Numpad onNumberClick={handleNumberClick} />
       </div>
