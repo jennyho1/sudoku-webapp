@@ -1,0 +1,107 @@
+/* Main container */
+.game-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+	align-items: center;
+  gap: 50px;
+	width: 100%;
+}
+
+/* Board styling */
+.board {
+  display: flex;
+	flex-flow: column nowrap;
+	max-width: 582px;
+	width: 100%;
+	aspect-ratio: 1;
+}
+
+/* Rows and cells for the board */
+.row {
+  display: flex;
+}
+
+.cell {
+  position: relative;
+  margin: 0.4%;
+  border: 1px solid #878787;
+  border-radius: 4px;
+}
+.row > .cell:nth-child(3n+4) {
+  margin-left: 2%;
+}
+.row:nth-child(3n+4) {
+  margin-top: 2%;
+}
+
+.selected{
+	background-color: #bb13fe59;
+}
+
+/* Cell contents */
+.cell-content {
+  position: absolute;
+}
+
+.cell-number {
+  font-size: clamp(20px, 6vw, 40px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: rgb(240, 141, 205);
+}
+
+.cell-number.fixed {
+  color: white;
+}
+
+.cell-notes {
+  display: grid;
+	font-size: clamp(7px, 1.8vw, 12px);
+	grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr); 
+}
+
+.cell-notes-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell, .cell-content, cell-notes, .cell-notes-item  {
+	aspect-ratio: 1;
+	width: 100%;
+}
+
+.board.r0 .cell.r0,
+.board.r1 .cell.r1,
+.board.r2 .cell.r2,
+.board.r3 .cell.r3,
+.board.r4 .cell.r4,
+.board.r5 .cell.r5, 
+.board.r6 .cell.r6, 
+.board.r7 .cell.r7, 
+.board.r8 .cell.r8,
+.board.c0 .cell.c0,
+.board.c1 .cell.c1,
+.board.c2 .cell.c2,
+.board.c3 .cell.c3,
+.board.c4 .cell.c4,
+.board.c5 .cell.c5,
+.board.c6 .cell.c6,
+.board.c7 .cell.c7,
+.board.c8 .cell.c8,
+.board.b0 .cell.b0,
+.board.b1 .cell.b1,
+.board.b2 .cell.b2,
+.board.b3 .cell.b3,
+.board.b4 .cell.b4,
+.board.b5 .cell.b5,
+.board.b6 .cell.b6,
+.board.b7 .cell.b7,
+.board.b8 .cell.b8 {
+	border: rgb(255, 137, 255) solid 1px;
+	box-shadow: 0 0 0.5rem #bc13fe;
+}
