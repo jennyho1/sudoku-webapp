@@ -89,5 +89,8 @@
     grid-template-columns: repeat(9, 1fr);
     grid-template-rows: 1fr;
     aspect-ratio: auto;
+		button {
+			font-size: 1.5em;
+		}
   }
 }

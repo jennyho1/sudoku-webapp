@@ -45,7 +45,7 @@
 }
 
 .cell-number {
-  font-size: clamp(20px, 6vw, 40px);
+  font-size: clamp(20px, 6vw, 38px);
   display: flex;
   justify-content: center;
   align-items: center;
