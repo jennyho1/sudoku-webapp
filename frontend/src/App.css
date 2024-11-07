@@ -1,6 +1,21 @@
 #root {
-  max-width: 1280px;
-  padding: 2rem;
   text-align: center;
 	width: 100%;
+}
+
+/* Header styling */
+header {
+	position: absolute;
+	top: 0;
+  background-color: #151515;
+  color: #bc13fe;
+  text-align: center;
+	padding: 15px;
+  width: 100%;
+	box-sizing: border-box;
+}
+
+header h1 {
+  margin: 0;
+	font-size: 1.5em;
 }
