@@ -41,11 +41,12 @@ button {
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
+	border-radius: 6px;
   cursor: pointer;
   transition: box-shadow 0.25s;
 }
 button:hover {
-  box-shadow: 0 0 0.5rem #bc13fe;
+  box-shadow: 0 0 0.5rem var(--shadow-color);
 }
 
 

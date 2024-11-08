@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { getSudoku } from "sudoku-gen";
+import { useState, ChangeEvent } from "react";
 import Board from "./Board";
 import Numpad from "./Numpad";
 import Controls from "./Controls";
+import Settings from "./Settings";
 
 export type CellData = {
   value: number | null;
@@ -15,31 +17,43 @@ type CellState = {
   state: CellData;
 };
 
-// 9x9 array with initial values (0 represents empty cells)
-const initialBoard = [
-  [1, 3, 0, 0, 0, 4, 0, 0, 0],
-  [9, 8, 0, 0, 7, 0, 2, 4, 1],
-  [6, 7, 0, 8, 0, 1, 3, 0, 0],
-  [0, 0, 8, 0, 0, 2, 9, 3, 5],
-  [0, 0, 0, 0, 1, 7, 4, 8, 0],
-  [0, 0, 3, 0, 0, 0, 7, 0, 0],
-  [4, 0, 0, 1, 0, 6, 0, 9, 3],
-  [3, 6, 9, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 9, 0, 0, 4],
-];
+enum Difficulty {
+  Easy = "easy",
+  Medium = "medium",
+  Hard = "hard",
+  Expert = "expert",
+}
 
-const createBoard = (initialBoard: number[][]): CellData[][] => {
-  return initialBoard.map((row) =>
-    row.map((cellValue) => ({
-      value: cellValue || null,
-      notes: [],
-      fixed: cellValue !== 0,
-    }))
-  );
+const createBoard = (difficulty: Difficulty): CellData[][] => {
+  const sudoku = getSudoku(difficulty);
+  const board = parseSudokuBoard(sudoku.puzzle);
+  return board;
 };
 
+function parseSudokuBoard(boardString: string): CellData[][] {
+  const board: CellData[][] = [];
+
+  for (let row = 0; row < 9; row++) {
+    const rowCells: CellData[] = [];
+    for (let col = 0; col < 9; col++) {
+      const char = boardString[row * 9 + col];
+      const value = char === "-" ? null : parseInt(char);
+      rowCells.push({
+        value,
+        fixed: value !== null,
+        notes: [],
+      });
+    }
+    board.push(rowCells);
+  }
+
+  return board;
+}
+
 function Game() {
-  const [board, setBoard] = useState<CellData[][]>(createBoard(initialBoard));
+  const [board, setBoard] = useState<CellData[][]>(
+    createBoard(Difficulty.Easy)
+  );
   const [selectedCell, setSelectedCell] = useState<{
     row: number;
     col: number;
@@ -48,6 +62,35 @@ function Game() {
   const [notesToggled, setNotesToggle] = useState<boolean>(false);
   const [undoStack, setUndoStack] = useState<CellState[]>([]);
   const [redoStack, setRedoStack] = useState<CellState[]>([]);
+  const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.Easy);
+  const [theme, setTheme] = useState<string>("purple");
+
+  const resetGame = () => {
+    setSelectedCell({ row: -1, col: -1, box: -1 });
+    setUndoStack([]);
+    setRedoStack([]);
+  };
+
+  const handleDifficultyChange = (event: ChangeEvent<HTMLSelectElement>) => {
+		setDifficulty(()=>{
+			createNewGame(event.target.value as Difficulty);
+			return event.target.value as Difficulty
+		});
+
+  };
+
+  const handleThemeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setTheme(event.target.value);
+  };
+
+  const handleNewGame = () => {
+    createNewGame(difficulty)
+  };
+
+	const createNewGame = (gameDifficulty: Difficulty) => {
+    resetGame();
+    setBoard(createBoard(gameDifficulty));
+  };
 
   const handleToggle = () => setNotesToggle(!notesToggled);
 
@@ -68,6 +111,7 @@ function Game() {
               rowIndex === selectedCell.row &&
               colIndex === selectedCell.col
             ) {
+              savePreviousState(rowIndex, colIndex, cellData);
               return { ...cellData, value: null, notes: [] };
             }
             return cellData;
@@ -163,12 +207,19 @@ function Game() {
   };
 
   return (
-    <div className="game-container">
-      <Board
-        board={board}
-        selectedCell={selectedCell}
-        onCellClick={handleCellClick}
-      />
+    <div className={"game-container " + theme}>
+      <div className="main">
+        <Settings
+          onDifficultyChange={handleDifficultyChange}
+					onThemeChange={handleThemeChange}
+          onNewGame={handleNewGame}
+        />
+        <Board
+          board={board}
+          selectedCell={selectedCell}
+          onCellClick={handleCellClick}
+        />
+      </div>
 
       <div className="sidebar">
         <Controls

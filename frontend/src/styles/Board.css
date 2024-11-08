@@ -4,16 +4,19 @@
   flex-wrap: wrap;
   justify-content: center;
 	align-items: center;
-  gap: 40px;
-	padding: 100px 30px;
+  gap: 30px;
+	padding: 80px 30px;
+}
+
+.main {
+	max-width: 582px;
+	width: 100%;
 }
 
 /* Board styling */
 .board {
   display: flex;
 	flex-flow: column nowrap;
-	max-width: 582px;
-	width: 100%;
 	aspect-ratio: 1;
 }
 
@@ -36,7 +39,7 @@
 }
 
 .selected{
-	background-color: #bb13fe59;
+	background-color: var(--cell-color);
 }
 
 /* Cell contents */
@@ -50,7 +53,7 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  color: rgb(240, 141, 205);
+  color: var(--text-color);
 }
 
 .cell-number.fixed {
@@ -102,6 +105,6 @@
 .board.b6 .cell.b6,
 .board.b7 .cell.b7,
 .board.b8 .cell.b8 {
-	border: rgb(255, 137, 255) solid 1px;
-	box-shadow: 0 0 0.5rem #bc13fe;
+	border: var(--border-color) solid 1px;
+	box-shadow: 0 0 0.5rem var(--shadow-color);
 }

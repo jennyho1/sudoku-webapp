@@ -1,6 +1,11 @@
 #root {
   text-align: center;
 	width: 100%;
+
+	--shadow-color: #9500ff;
+	--border-color: #bd62ff;
+	--text-color: #d698ff;
+	--cell-color: #9500ff40;
 }
 
 /* Header styling */
@@ -8,7 +13,6 @@ header {
 	position: absolute;
 	top: 0;
   background-color: #151515;
-  color: #bc13fe;
   text-align: center;
 	padding: 15px;
   width: 100%;
@@ -18,4 +22,46 @@ header {
 header h1 {
   margin: 0;
 	font-size: 1.5em;
+}
+
+.red {
+	--shadow-color: #ff0000;
+	--border-color: #a00000;
+	--text-color: #ffa3a3;
+	--cell-color: #ff000040;
+}
+
+.orange {
+	--shadow-color: #ff7b00;
+	--border-color: #8a4300;
+	--text-color: #ffbb7b;
+	--cell-color: #ff7b0040;
+}
+
+.yellow {
+	--shadow-color: #fbff00;
+	--border-color: #818400;
+	--text-color: #fdff93;
+	--cell-color: #fbff0040;
+}
+
+.green {
+	--shadow-color: #2bff00;
+	--border-color: #189200;
+	--text-color: #9aff86;
+	--cell-color: #2bff0040;
+}
+
+.blue {
+	--shadow-color: #0091ff;
+	--border-color: #005493;
+	--text-color: #8fbaff;
+	--cell-color: #0091ff40;
+}
+
+.purple {
+	--shadow-color: #9500ff;
+	--border-color: #6200a7;
+	--text-color: #d698ff;
+	--cell-color: #9500ff40;
 }

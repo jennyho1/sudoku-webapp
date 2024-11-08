@@ -1,6 +1,7 @@
 import "./App.css";
 import "./styles/Board.css";
 import "./styles/Sidebar.css";
+import "./styles/Settings.css";
 import Game from "./components/Game";
 
 function App() {

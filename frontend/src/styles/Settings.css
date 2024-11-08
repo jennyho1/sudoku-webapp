@@ -1,0 +1,23 @@
+.settings {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	margin-bottom: 20px;
+	font-size: 1em;
+}
+
+.settings-item {
+	flex: 1;
+	flex-basis: 0;
+}
+
+select {
+	margin: 6px;
+	padding: 4px;
+	background-color: #1a1a1a;
+	border-radius: 6px;
+	border: none;
+}
+
