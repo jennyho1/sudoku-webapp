@@ -3,7 +3,7 @@
 	width: 100%;
 
 	--shadow-color: #9500ff;
-	--border-color: #bd62ff;
+	--border-color: #6200a7;
 	--text-color: #d698ff;
 	--cell-color: #9500ff40;
 }
@@ -53,10 +53,10 @@ header h1 {
 }
 
 .blue {
-	--shadow-color: #0091ff;
-	--border-color: #005493;
-	--text-color: #8fbaff;
-	--cell-color: #0091ff40;
+	--shadow-color: #0048ff;
+	--border-color: #0035b9;
+	--text-color: #8cadff;
+	--cell-color: #0048ff40;
 }
 
 .purple {

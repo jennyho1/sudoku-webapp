@@ -1,4 +1,5 @@
 import { ChangeEvent } from "react";
+import "../styles/Settings.css";
 
 interface Props {
   onDifficultyChange: (event: ChangeEvent<HTMLSelectElement>) => void;

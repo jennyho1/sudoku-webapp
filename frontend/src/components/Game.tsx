@@ -1,15 +1,10 @@
-import { getSudoku } from "sudoku-gen";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
+import "../styles/Board.css";
 import Board from "./Board";
-import Numpad from "./Numpad";
 import Controls from "./Controls";
 import Settings from "./Settings";
-
-export type CellData = {
-  value: number | null;
-  notes: number[];
-  fixed: boolean;
-};
+import Modal from "./Modal";
+import { createBoard, Difficulty, CellData, getSolution } from "../utils/board";
 
 type CellState = {
   row: number;
@@ -17,43 +12,8 @@ type CellState = {
   state: CellData;
 };
 
-enum Difficulty {
-  Easy = "easy",
-  Medium = "medium",
-  Hard = "hard",
-  Expert = "expert",
-}
-
-const createBoard = (difficulty: Difficulty): CellData[][] => {
-  const sudoku = getSudoku(difficulty);
-  const board = parseSudokuBoard(sudoku.puzzle);
-  return board;
-};
-
-function parseSudokuBoard(boardString: string): CellData[][] {
-  const board: CellData[][] = [];
-
-  for (let row = 0; row < 9; row++) {
-    const rowCells: CellData[] = [];
-    for (let col = 0; col < 9; col++) {
-      const char = boardString[row * 9 + col];
-      const value = char === "-" ? null : parseInt(char);
-      rowCells.push({
-        value,
-        fixed: value !== null,
-        notes: [],
-      });
-    }
-    board.push(rowCells);
-  }
-
-  return board;
-}
-
 function Game() {
-  const [board, setBoard] = useState<CellData[][]>(
-    createBoard(Difficulty.Easy)
-  );
+  const [board, setBoard] = useState<CellData[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{
     row: number;
     col: number;
@@ -64,6 +24,15 @@ function Game() {
   const [redoStack, setRedoStack] = useState<CellState[]>([]);
   const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.Easy);
   const [theme, setTheme] = useState<string>("purple");
+  const [showSolvedModal, setShowSolvedModal] = useState(false);
+  const [showNewGameModal, setShowNewGameModal] = useState(false);
+  const [solved, setSolved] = useState(false);
+	
+  useEffect(() => {
+    const initialBoard = createBoard(Difficulty.Easy);
+    setBoard(initialBoard);
+  }, []);
+
 
   const resetGame = () => {
     setSelectedCell({ row: -1, col: -1, box: -1 });
@@ -72,11 +41,10 @@ function Game() {
   };
 
   const handleDifficultyChange = (event: ChangeEvent<HTMLSelectElement>) => {
-		setDifficulty(()=>{
-			createNewGame(event.target.value as Difficulty);
-			return event.target.value as Difficulty
-		});
-
+    setDifficulty(() => {
+      createNewGame(event.target.value as Difficulty);
+      return event.target.value as Difficulty;
+    });
   };
 
   const handleThemeChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -84,17 +52,25 @@ function Game() {
   };
 
   const handleNewGame = () => {
-    createNewGame(difficulty)
+    createNewGame(difficulty);
   };
 
-	const createNewGame = (gameDifficulty: Difficulty) => {
+  const createNewGame = (gameDifficulty: Difficulty) => {
+    if (undoStack.length > 0 && !showNewGameModal) {
+      setShowNewGameModal(true);
+			return 
+    }
     resetGame();
     setBoard(createBoard(gameDifficulty));
+    setShowSolvedModal(false);
+		setShowNewGameModal(false);
+		setSolved(false);
   };
 
   const handleToggle = () => setNotesToggle(!notesToggled);
 
   const handleCellClick = (row: number, col: number, box: number) => {
+    if (solved) return;
     setSelectedCell((prev) =>
       prev.row === row && prev.col === col
         ? { row: -1, col: -1, box: -1 }
@@ -112,7 +88,7 @@ function Game() {
               colIndex === selectedCell.col
             ) {
               savePreviousState(rowIndex, colIndex, cellData);
-              return { ...cellData, value: null, notes: [] };
+              return { ...cellData, value: null, notes: [], incorrect: false };
             }
             return cellData;
           })
@@ -137,12 +113,14 @@ function Game() {
                 notes: cellData.notes.includes(number)
                   ? cellData.notes.filter((num) => num !== number)
                   : [...cellData.notes, number],
+                incorrect: false,
               };
             } else if (cellData.value !== number) {
               return {
                 ...cellData,
                 value: number,
                 notes: [],
+                incorrect: false,
               };
             }
           }
@@ -206,32 +184,74 @@ function Game() {
     );
   };
 
-  return (
-    <div className={"game-container " + theme}>
-      <div className="main">
-        <Settings
-          onDifficultyChange={handleDifficultyChange}
-					onThemeChange={handleThemeChange}
-          onNewGame={handleNewGame}
-        />
-        <Board
-          board={board}
-          selectedCell={selectedCell}
-          onCellClick={handleCellClick}
-        />
-      </div>
+  const handleCheck = () => {
+    const solution = getSolution();
+    let correct: boolean = true;
+    setBoard(
+      board.map((row, rowIndex) =>
+        row.map((cellData, colIndex) => {
+          if (
+            !cellData.fixed &&
+            cellData.value !== parseInt(solution[rowIndex * 9 + colIndex])
+          ) {
+            correct = false;
+            return { ...cellData, incorrect: true };
+          }
+          return cellData;
+        })
+      )
+    );
+    if (correct) {
+      setShowSolvedModal(true);
+      setSolved(true);
+      resetGame();
+    }
+  };
 
-      <div className="sidebar">
+  return (
+    <>
+      <div className={"game-container " + theme}>
+        <div className={"main" + (solved ? " solved" : "")}>
+          <Settings
+            onDifficultyChange={handleDifficultyChange}
+            onThemeChange={handleThemeChange}
+            onNewGame={handleNewGame}
+          />
+          <Board
+            board={board}
+            selectedCell={selectedCell}
+            onCellClick={handleCellClick}
+          />
+        </div>
+
         <Controls
           notesToggled={notesToggled}
           onErase={handleErase}
           onToggle={handleToggle}
           onUndo={handleUndo}
           onRedo={handleRedo}
+          onNumberClick={handleNumberClick}
+          onCheck={handleCheck}
         />
-        <Numpad onNumberClick={handleNumberClick} />
       </div>
-    </div>
+      {showSolvedModal && (
+        <Modal onClose={() => setShowSolvedModal(false)}>
+          <p>Congratulations! You solved sudoku on {difficulty} mode.</p>
+          <button onClick={handleNewGame}>Play New Game</button>
+        </Modal>
+      )}
+
+      {showNewGameModal && (
+        <Modal onClose={() => setShowNewGameModal(false)}>
+					<p>Start a new game?</p>
+          <p>Current game progress will be lost</p>
+					<div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+						<button onClick={handleNewGame}>OK</button>
+					<button onClick={() => setShowNewGameModal(false)}>Cancel</button>
+					</div>
+        </Modal>
+      )}
+    </>
   );
 }
 

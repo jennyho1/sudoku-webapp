@@ -38,7 +38,11 @@
   margin-top: 2%;
 }
 
-.selected{
+.cell.incorrect {
+	background-color: rgba(255, 0, 0, 0.105);
+}
+
+.cell.selected{
 	background-color: var(--cell-color);
 }
 
@@ -107,4 +111,9 @@
 .board.b8 .cell.b8 {
 	border: var(--border-color) solid 1px;
 	box-shadow: 0 0 0.5rem var(--shadow-color);
+}
+
+.solved .cell {
+	box-shadow: 0 0 0.5rem rgb(8, 255, 8);
+	border: rgb(0, 168, 0) 1px solid;
 }
