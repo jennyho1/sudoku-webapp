@@ -1,4 +1,4 @@
-import { CellData } from "../utils/board";
+import { CellData } from "../utils/types";
 
 interface Props {
   row: number;
@@ -14,20 +14,13 @@ function Cell({ row, col, cellData, isSelected, onCellClicked }: Props) {
 
   return (
     <div
-      className={
-        "cell r" +
-        row +
-        " c" +
-        col +
-        " b" +
-        box +
-        (isSelected ? " selected" : "") +
-        (cellData.incorrect ? " incorrect" : "")
-      }
+      className={`cell r${row} c${col} b${box} ${
+        isSelected ? "selected" : ""
+      } ${cellData.incorrect ? "incorrect" : ""}`}
       onClick={() => onCellClicked(row, col, box)}
     >
       <div className="cell-content">
-        <div className={"cell-number " + (cellData.fixed ? "fixed" : "")}>
+        <div className={`cell-number + ${cellData.fixed ? "fixed" : ""}`}>
           {cellData.value ? cellData.value : ""}
         </div>
       </div>

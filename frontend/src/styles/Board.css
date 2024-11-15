@@ -13,11 +13,9 @@
 	width: 100%;
 }
 
-/* Board styling */
 .board {
   display: flex;
-	flex-flow: column nowrap;
-	aspect-ratio: 1;
+	flex-direction: column;
 }
 
 /* Rows and cells for the board */

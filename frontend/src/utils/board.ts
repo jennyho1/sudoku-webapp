@@ -1,18 +1,5 @@
 import { getSudoku } from "sudoku-gen";
-
-export type CellData = {
-  value: number | null;
-  notes: number[];
-  fixed: boolean;
-	incorrect: boolean;
-};
-
-export enum Difficulty {
-  Easy = "easy",
-  Medium = "medium",
-  Hard = "hard",
-  Expert = "expert",
-}
+import { CellData, Difficulty } from "./types"
 
 let solution: string = "";
 
@@ -20,17 +7,14 @@ function setSolution(newSolution: string): void {
 	solution = newSolution;
 }
 
-// Function to get the solution, if needed
 export function getSolution(): string {
 	return solution;
 }
 
-
 export function createBoard(difficulty: Difficulty): CellData[][] {
   const sudoku = getSudoku(difficulty);
   setSolution(sudoku.solution);
-  const board = parseSudokuBoard(sudoku.puzzle);
-  return board;
+  return parseSudokuBoard(sudoku.puzzle);
 };
 
 export function parseSudokuBoard(boardString: string): CellData[][] {

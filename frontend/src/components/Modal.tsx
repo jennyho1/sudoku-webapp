@@ -7,7 +7,6 @@ interface Props {
 	children: ReactNode;
 }
 
-
 function Modal({onClose, children}: Props) {
 
 	return (
@@ -20,7 +19,6 @@ function Modal({onClose, children}: Props) {
 			</div>
 		</div>
 	)
-
 }
 
 export default Modal;

@@ -1,5 +1,5 @@
 import Cell from "./Cell";
-import { CellData } from "./Game";
+import { CellData } from "../utils/types";
 
 interface Props {
   board: CellData[][];
@@ -14,14 +14,7 @@ interface Props {
 function Board({ board, selectedCell, onCellClick }: Props) {
   return (
     <div
-      className={
-        "board r" +
-        selectedCell.row +
-        " c" +
-        selectedCell.col +
-        " b" +
-        selectedCell.box
-      }
+      className={`board r${selectedCell.row} c${selectedCell.col} b${selectedCell.box}`}
     >
       {board.map((row, rowIndex) => (
         <div className="row" key={rowIndex}>
