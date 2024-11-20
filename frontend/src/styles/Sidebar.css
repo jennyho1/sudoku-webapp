@@ -5,17 +5,6 @@
   gap: 20px;
 }
 
-/* Numpad Styling */
-.numpad {
-  display: grid;
-  gap: 5px;
-}
-
-.numpad button {
-  font-size: 2em;
-  transition: box-shadow 0.25s;
-}
-
 /* Controls Styling */
 .controls {
   display: flex;
@@ -23,13 +12,14 @@
 }
 
 .controls button {
-  font-size: 2em;
-  width: 50px;
-  height: 50px;
+	aspect-ratio: 1;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+	font-size: 2em;
+	flex-grow: 1;
+	padding: 10px;
 }
 
 .controls p {
@@ -60,28 +50,40 @@
 }
 
 /* Responsive Layout Adjustments */
-@media (min-width: 1200px) {
+@media (min-width: 1000px) {
   .sidebar {
     min-width: 300px;
   }
 
   .numpad {
+		display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     aspect-ratio: 1;
+		gap: 5px;
   }
+
+	.numpad button {
+		font-size: 2em;
+	}
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 999px) {
   .sidebar {
-    max-width: 582px;
+    max-width: 500px;
     width: 100%;
   }
 
   .numpad {
-    grid-template-columns: repeat(9, 1fr);
-    button {
-      font-size: 1.5em;
-    }
+		display: flex;
+		justify-content: space-between;
   }
+
+	.numpad button {
+		width: auto;
+		padding: 0;
+		flex-grow: 1;
+		margin: 0 2px;
+		font-size: 1.5rem;
+	}
 }

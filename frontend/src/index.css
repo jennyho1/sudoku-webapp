@@ -44,6 +44,7 @@ button {
 	border-radius: 6px;
   cursor: pointer;
   transition: box-shadow 0.25s;
+	color: white;
 }
 button:hover {
   box-shadow: 0 0 0.5rem var(--shadow-color);

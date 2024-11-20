@@ -4,12 +4,12 @@
   flex-wrap: wrap;
   justify-content: center;
 	align-items: center;
-  gap: 30px;
+  gap: 25px;
 	padding: 80px 30px;
 }
 
 .main {
-	max-width: 582px;
+	max-width: 500px;
 	width: 100%;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .cell-number {
-  font-size: clamp(20px, 6vw, 38px);
+  font-size: clamp(20px, 6vw, 34px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,7 +64,7 @@
 
 .cell-notes {
   display: grid;
-	font-size: clamp(7px, 1.8vw, 12px);
+	font-size: clamp(4px, 1.8vw, 10px);
 	grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr); 
 }
